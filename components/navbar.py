@@ -18,7 +18,7 @@ def create_navbar():
                 ],
             ),
         ],
-        brand="Water Resources Dashboard",
+        brand="Kestrel-IHM Dash",
         brand_href="/home",
         sticky="top",
         color="lightseagreen",

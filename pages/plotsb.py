@@ -1,4 +1,5 @@
 from dash import dcc, html, Input, Output, callback
+import dash_bootstrap_components as dbc
 import pandas as pd
 import plotly.express as px
 
@@ -22,9 +23,34 @@ y_options = ['NSE_full_range', 'LogNSE_full_range', 'MARE', 'LogMARE', 'RMSE', '
 layout = html.Div([
 
     navbar,
-    dcc.Dropdown(id='x_dropdown', options=x_options, value = 'Arable_CMax', style = {'width': 400, 'textAlign': 'center'}),
-    dcc.Dropdown(id='y_dropdown', options=y_options, value='VolError(%)', style = {'width': 400, 'textAlign': 'center'}),
-    dcc.Dropdown(id='z_dropdown', options=y_options, value='RMSE', style = {'width': 400, 'textAlign': 'center'}),
+    html.H1(
+        children=' Kestrel-IHM 3-Dimensional Plot',
+        style={'textAlign': 'center', 'padding': 30}
+    ),
+    dbc.Row([
+        dbc.Col(
+        html.H6(children='x-axis Variable:'), width={'size': 2, 'offset': 4}
+        ),
+        dbc.Col(
+        dcc.Dropdown(id='x_dropdown', options=x_options, value = 'Arable_CMax', style = {'width': 400, 'textAlign': 'center', 'font-size': 'x-small'})
+        )
+    ]),
+    dbc.Row([
+        dbc.Col(
+        html.H6(children='y-axis Variable:'), width={'size': 2, 'offset': 4}
+        ),
+        dbc.Col(
+        dcc.Dropdown(id='y_dropdown', options=y_options, value='VolError(%)', style = {'width': 400, 'textAlign': 'center', 'font-size': 'x-small'})
+        )
+    ]),
+    dbc.Row([
+        dbc.Col(
+        html.H6(children='Gradient Variable:'), width={'size': 2, 'offset': 4}
+        ),
+        dbc.Col(
+        dcc.Dropdown(id='z_dropdown', options=y_options, value='RMSE', style = {'width': 400, 'textAlign': 'center', 'font-size': 'x-small'})
+        )
+    ]),
     dcc.Graph(id='fig_B', style = {'width': '100%', 'height': 1000}),
     dcc.RangeSlider(id='slider_B',min=min_val, max=max_val, value = [min_val, max_val])
 
@@ -41,7 +67,6 @@ layout = html.Div([
 def update_RS(x_value):
     min_val = df[x_value].min()
     max_val = df[x_value].max()
-    print(min_val, max_val)
     return min_val, max_val
 
 @callback(
