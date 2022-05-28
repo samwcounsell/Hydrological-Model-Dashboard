@@ -14,6 +14,7 @@ def create_navbar():
                     dbc.DropdownMenuItem(divider=True),
                     dbc.DropdownMenuItem("Plots", href='/plots'),
                     dbc.DropdownMenuItem("PlotsB", href='/plotsb'),
+                    dbc.DropdownMenuItem("Main Plot", href='/main_plot'),
                     dbc.DropdownMenuItem("About", href='/about')
                 ],
             ),

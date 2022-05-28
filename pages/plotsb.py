@@ -51,7 +51,7 @@ layout = html.Div([
         dcc.Dropdown(id='z_dropdown', options=y_options, value='RMSE', style = {'width': 400, 'textAlign': 'center', 'font-size': 'x-small'})
         )
     ]),
-    dcc.Graph(id='fig_B', style = {'width': '100%', 'height': 1000}),
+    dcc.Graph(id='fig_B', style = {'width': '100%', 'height': 950}),
     dcc.RangeSlider(id='slider_B',min=min_val, max=max_val, value = [min_val, max_val])
 
 ])
