@@ -22,8 +22,9 @@ y_options = ['NSE_full_range', 'LogNSE_full_range', 'MARE', 'LogMARE', 'RMSE', '
 layout = html.Div([
 
     navbar,
-    dcc.Dropdown(id='x_dropdown', options=x_options, value = 'Arable_CMax'),
-    dcc.Dropdown(id='y_dropdown', options=y_options, value='VolError(%)'),
+    dcc.Dropdown(id='x_dropdown', options=x_options, value = 'Arable_CMax', style = {'width': 400, 'textAlign': 'center'}),
+    dcc.Dropdown(id='y_dropdown', options=y_options, value='VolError(%)', style = {'width': 400, 'textAlign': 'center'}),
+    dcc.Dropdown(id='z_dropdown', options=y_options, value='RMSE', style = {'width': 400, 'textAlign': 'center'}),
     dcc.Graph(id='fig_B', style = {'width': '100%', 'height': 1000}),
     dcc.RangeSlider(id='slider_B',min=min_val, max=max_val, value = [min_val, max_val])
 
@@ -47,15 +48,16 @@ def update_RS(x_value):
      Output('fig_B', 'figure'),
     [Input('x_dropdown', 'value'),
      Input('y_dropdown', 'value'),
+     Input('z_dropdown', 'value'),
      #Input('slider_B', 'min'),
      #Input('slider_B', 'max'),
      Input('slider_B', 'value')])
 # Function to create and update map depending on stage selected
-def update_B(x_value, y_value, range):
+def update_B(x_value, y_value, z_value, range):
 
     low, high = range
     mask = (df[df[x_value].between(low, high)])
 
-    fig_B = px.scatter(mask, x=x_value, y=y_value)
+    fig_B = px.scatter(mask, x=x_value, y=y_value, color=z_value, color_continuous_scale='ylgnbu')
 
     return fig_B
