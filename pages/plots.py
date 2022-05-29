@@ -3,10 +3,11 @@ import pandas as pd
 import plotly.express as px
 
 from components.navbar import create_navbar
+from functions.data_reading import pull_data
 
 navbar = create_navbar()
 
-df = pd.read_csv('data/Feb_2020.csv')
+df = pull_data()
 
 x_options = ['Arable_CMax', 'Arable_Evap', 'Arable_VarDist''Grassland_CMax', 'Grassland_Evap', 'Grassland_VarDist',
              'Forestry_CMax', 'Forestry_Evap', 'Forestry_VarDist', 'Urban_CMax', 'Urban_Evap', 'Urban_FTCoeff',

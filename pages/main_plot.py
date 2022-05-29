@@ -5,20 +5,22 @@ import plotly.express as px
 import plotly.graph_objects as go
 
 from components.navbar import create_navbar
+from functions.data_reading import pull_data
 
 navbar = create_navbar()
 
-df = pd.read_csv('data/Feb_2020.csv')
+df = pull_data()
+vars = list(df)
+
+q = vars[-9:]
+y_options = vars[-17:-9]
+del(y_options[2:4])
+x_options = vars[:-17]
+
 
 min_val = 0
 max_val = 1000
 
-x_options = ['Arable_CMax', 'Arable_Evap', 'Arable_VarDist', 'Grassland_CMax', 'Grassland_Evap', 'Grassland_VarDist',
-             'Forestry_CMax', 'Forestry_Evap', 'Forestry_VarDist', 'Urban_CMax', 'Urban_Evap', 'Urban_FTCoeff',
-             'Class_5_STCoeff', 'Class_5_SoilTension', 'Class_7_STCoeff', 'Class_7_GWCoeff', 'Class_7_SoilTension',
-             'Class_1_FTCoeff', 'Class_5_FTCoeff', 'Class_7_FTCoeff']
-
-y_options = ['NSE_full_range', 'LogNSE_full_range', 'MARE', 'LogMARE', 'RMSE', 'VolError(%)']
 
 # Page layout
 layout = html.Div([
@@ -55,9 +57,25 @@ layout = html.Div([
                          style={'width': 400, 'textAlign': 'center', 'font-size': 'x-small'})
         )
     ]),
-    dcc.Graph(id='fig', style={'width': '100%', 'height': 950}),
-    dcc.RangeSlider(id='slider', min=min_val, max=max_val, value=[min_val, max_val]),
-    dcc.Graph(id='q_fig', style={'width': '100%', 'height': 950})
+    dbc.Row([
+        dbc.Col(
+            dcc.Graph(id='fig', style={'width': '100%', 'height': 950}),
+        ),
+        dbc.Col(
+            dcc.Graph(id='q_fig', style={'width': '100%', 'height': 950})
+        )
+    ]),
+    dbc.Row([
+        dbc.Col(
+            html.P(""),
+        ),
+        dbc.Col(
+            html.P("x-axis Data Range:"),
+        ),
+        dbc.Col(
+            dcc.RangeSlider(id='slider', min=min_val, max=max_val, value=[min_val, max_val])
+        )
+    ],  style={"display": "grid", "grid-template-columns": "5% 10% 75%"})
 
 ])
 
@@ -110,9 +128,10 @@ def update_main(x_value, range):
             )
         )
     q_fig.add_trace(go.Scatter(x=[1, 5, 10, 30, 50, 70, 90, 95, 99],
-                               y=[10.177, 4.72, 2.65, 0.995, 0.614, 0.412, 0.258, 0.217, 0.175], name="Observed"))
+                               y=[10.177, 4.72, 2.65, 0.995, 0.614, 0.412, 0.258, 0.217, 0.175], name="Observed", marker_color='rgba(0,0,0,0.5)'))
     q_fig.add_trace(go.Scatter(x=[1, 5, 10, 30, 50, 70, 90, 95, 99],
                                y=[10.177, 4.72, 2.65, 0.995, 0.614, 0.412, 0.258, 0.217, 0.175],
                                marker_color='rgba(0,0,0,0.5)', showlegend=False))
-
+    q_fig.update_layout(xaxis = dict(title = 'Quantile'), yaxis = dict(title = 'Flow'))
+    q_fig.update_yaxes(type="log")
     return q_fig

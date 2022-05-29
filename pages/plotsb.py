@@ -4,10 +4,11 @@ import pandas as pd
 import plotly.express as px
 
 from components.navbar import create_navbar
+from functions.data_reading import pull_data
 
 navbar = create_navbar()
 
-df = pd.read_csv('data/Feb_2020.csv')
+df = pull_data()
 
 min_val = 0
 max_val = 1000
