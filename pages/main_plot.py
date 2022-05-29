@@ -145,7 +145,6 @@ def update_main(x_value, range, log):
 
     if log == 'Yes':
         q_fig.update_yaxes(title='Flow (Log)', type="log")
-
     else:
         q_fig.update_yaxes()
 
