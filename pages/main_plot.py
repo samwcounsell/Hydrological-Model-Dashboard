@@ -20,6 +20,8 @@ x_options = vars[:-17]
 min_val = 0
 max_val = 1000
 
+trace_cols = ['seagreen', 'blue', 'cornflowerblue', 'lightgreen', 'forestgreen', 'gold', 'lightblue', 'lightgreen']
+
 # Page layout
 layout = html.Div([
 
@@ -66,7 +68,7 @@ layout = html.Div([
     ]),
     dbc.Row([
         dbc.Col(
-            dcc.Graph(id='fig', style={'width': '100%', 'height': 950}),
+            dcc.Graph(id='main_fig', style={'width': '100%', 'height': 950}),
         ),
         dbc.Col(
             dcc.Graph(id='q_fig', style={'width': '100%', 'height': 950})
@@ -99,21 +101,19 @@ def update_RS(x_value):
 
 
 @callback(
-    Output('fig', 'figure'),
+    Output('main_fig', 'figure'),
     [Input('x_dropdown', 'value'),
      Input('y_dropdown', 'value'),
      Input('z_dropdown', 'value'),
-     # Input('slider_B', 'min'),
-     # Input('slider_B', 'max'),
      Input('slider', 'value')])
 # Function to create and update map depending on stage selected
-def update_B(x_value, y_value, z_value, range):
+def update_main_fig(x_value, y_value, z_value, range):
     low, high = range
     mask = (df[df[x_value].between(low, high)])
 
-    fig = px.scatter(mask, x=x_value, y=y_value, color=z_value, color_continuous_scale='ylgnbu')
+    main_fig = px.scatter(mask, x=x_value, y=y_value, color=z_value, color_continuous_scale='viridis')
 
-    return fig
+    return main_fig
 
 
 @callback(
@@ -132,7 +132,7 @@ def update_main(x_value, range, log):
                 x=[1, 5, 10, 30, 50, 70, 90, 95, 99],
                 y=[row['Q1'], row['Q5'], row['Q10'], row['Q30'], row['Q50'], row['Q70'],
                    row['Q90'], row['Q95'], row['Q99']],
-                mode="lines", showlegend=False
+                mode="lines", showlegend=False, marker_color=trace_cols[idx % 8]
             )
         )
     q_fig.add_trace(go.Scatter(x=[1, 5, 10, 30, 50, 70, 90, 95, 99],

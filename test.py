@@ -34,3 +34,6 @@ print(y)
 
 x = vars[:-17]
 print(x)
+
+mask =
+
