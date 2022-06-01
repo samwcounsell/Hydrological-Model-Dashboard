@@ -17,8 +17,8 @@ y_options = vars[-17:-9]
 del (y_options[2:4])
 x_options = vars[:-17]
 
-min_val_tl, min_val_bl, min_val_br = 0, 0, 0
-max_val_tl, max_val_bl, max_val_br = 1000, 1000, 1000
+min_val_tlx, min_val_tly, min_val_blx, min_val_bly, min_val_brx, min_val_bry = 0, -1, 0, -1, 0, -1
+max_val_tlx, max_val_tly, max_val_blx, max_val_bly, max_val_brx, max_val_bry = 1000, 1000, 1000, 1000, 1000, 1000
 
 trace_cols = ['seagreen', 'blue', 'cornflowerblue', 'lightgreen', 'forestgreen', 'gold', 'lightblue', 'lightgreen']
 
@@ -59,15 +59,23 @@ layout = html.Div([
 
     ]),
 
-    # slider
+    # x slider
     dbc.Row([
 
         dbc.Col(html.P("")),
-        dbc.Col(dcc.RangeSlider(id='tl_slider', min=min_val_tl, max=max_val_tl, value=[min_val_tl, max_val_tl])),
+        dbc.Col(dcc.RangeSlider(id='tlx_slider', min=min_val_tlx, max=max_val_tlx, value=[min_val_tlx, max_val_tlx])),
         dbc.Col(html.P("")),
 
         ], style={"display": "grid", "grid-template-columns": "5% 40% 55%"}),
 
+    # y slider
+    dbc.Row([
+
+        dbc.Col(html.P("")),
+        dbc.Col(dcc.RangeSlider(id='tly_slider', min=min_val_tly, max=max_val_tly, value=[min_val_tly, max_val_tly])),
+        dbc.Col(html.P("")),
+
+        ], style={"display": "grid", "grid-template-columns": "5% 40% 55%"}),
 
 
     # X Y Z        X Y Z
@@ -108,9 +116,18 @@ layout = html.Div([
     dbc.Row([
 
         dbc.Col(html.P("")),
-        dbc.Col(dcc.RangeSlider(id='bl_slider', min=min_val_bl, max=max_val_bl, value=[min_val_bl, max_val_bl])),
+        dbc.Col(dcc.RangeSlider(id='blx_slider', min=min_val_blx, max=max_val_blx, value=[min_val_blx, max_val_blx])),
         dbc.Col(html.P("")),
-        dbc.Col(dcc.RangeSlider(id='br_slider', min=min_val_br, max=max_val_br, value=[min_val_br, max_val_br]))
+        dbc.Col(dcc.RangeSlider(id='brx_slider', min=min_val_brx, max=max_val_brx, value=[min_val_brx, max_val_brx]))
+
+    ], style={"display": "grid", "grid-template-columns": "5% 40% 15% 40%"}),
+    
+dbc.Row([
+
+        dbc.Col(html.P("")),
+        dbc.Col(dcc.RangeSlider(id='bly_slider', min=min_val_bly, max=max_val_bly, value=[min_val_bly, max_val_bly])),
+        dbc.Col(html.P("")),
+        dbc.Col(dcc.RangeSlider(id='bry_slider', min=min_val_bry, max=max_val_bry, value=[min_val_bry, max_val_bry]))
 
     ], style={"display": "grid", "grid-template-columns": "5% 40% 15% 40%"}),
     
@@ -120,32 +137,59 @@ layout = html.Div([
 
 # Range Slider Updates
 @callback(
-    [Output('tl_slider', 'min'),
-     Output('tl_slider', 'max')],
+    [Output('tlx_slider', 'min'),
+     Output('tlx_slider', 'max')],
     Input('tl_x_dropdown', 'value'))
-def update_TLS(x_value):
-    tl_min_val = df[x_value].min()
-    tl_max_val = df[x_value].max()
-    return tl_min_val, tl_max_val
+def update_TLXS(x_value):
+    tlx_min_val = df[x_value].min()
+    tlx_max_val = df[x_value].max()
+    return tlx_min_val, tlx_max_val
 
 @callback(
-    [Output('bl_slider', 'min'),
-     Output('bl_slider', 'max')],
+    [Output('tly_slider', 'min'),
+     Output('tly_slider', 'max')],
+    Input('tl_y_dropdown', 'value'))
+def update_TLYS(y_value):
+    tly_min_val = df[y_value].min()
+    tly_max_val = df[y_value].max()
+    return tly_min_val, tly_max_val
+
+@callback(
+    [Output('blx_slider', 'min'),
+     Output('blx_slider', 'max')],
     Input('bl_x_dropdown', 'value'))
-def update_BLS(x_value):
-    bl_min_val = df[x_value].min()
-    bl_max_val = df[x_value].max()
-    return bl_min_val, bl_max_val
+def update_BLXS(x_value):
+    blx_min_val = df[x_value].min()
+    blx_max_val = df[x_value].max()
+    return blx_min_val, blx_max_val
 
 @callback(
-    [Output('br_slider', 'min'),
-     Output('br_slider', 'max')],
-    Input('br_x_dropdown', 'value'))
-def update_BRS(x_value):
-    br_min_val = df[x_value].min()
-    br_max_val = df[x_value].max()
-    return br_min_val, br_max_val
+    [Output('bly_slider', 'min'),
+     Output('bly_slider', 'max')],
+    Input('bl_y_dropdown', 'value'))
+def update_BLYS(y_value):
+    bly_min_val = df[y_value].min()
+    bly_max_val = df[y_value].max()
+    return bly_min_val, bly_max_val
 
+
+@callback(
+    [Output('brx_slider', 'min'),
+     Output('brx_slider', 'max')],
+    Input('br_x_dropdown', 'value'))
+def update_BRXS(x_value):
+    brx_min_val = df[x_value].min()
+    brx_max_val = df[x_value].max()
+    return brx_min_val, brx_max_val
+
+@callback(
+    [Output('bry_slider', 'min'),
+     Output('bry_slider', 'max')],
+    Input('br_y_dropdown', 'value'))
+def update_BRYS(y_value):
+    bry_min_val = df[y_value].min()
+    bry_max_val = df[y_value].max()
+    return bry_min_val, bry_max_val
 
 # Standard plot Callbacks
 
@@ -155,22 +199,36 @@ def update_BRS(x_value):
     [Input('tl_x_dropdown', 'value'),
      Input('tl_y_dropdown', 'value'),
      Input('tl_z_dropdown', 'value'),
-     Input('tl_slider', 'value'),
+     Input('tlx_slider', 'value'),
+     Input('tly_slider', 'value'),
      Input('bl_x_dropdown', 'value'),
-     Input('bl_slider', 'value'),
+     Input('bl_y_dropdown', 'value'),
+     Input('bl_z_dropdown', 'value'),
+     Input('blx_slider', 'value'),
+     Input('bly_slider', 'value'),
      Input('br_x_dropdown', 'value'),
-     Input('br_slider', 'value')
+     Input('br_y_dropdown', 'value'),
+     Input('br_z_dropdown', 'value'),
+     Input('brx_slider', 'value'),
+     Input('bry_slider', 'value'),
      ])
+
 # Function to create and update map depending on stage selected
-def update_tl_fig(main_x_value, main_y_value, main_z_value, main_range, b_x_value, b_range, c_x_value, c_range):
+def update_tl_fig(mainx_value, mainy_value, mainz_value, mainx_range, mainy_range, bx_value, by_value, bz_value, bx_range, by_range, cx_value, cy_value, cz_value, cx_range, cy_range):
 
-    main_low, main_high = main_range
-    b_low, b_high = b_range
-    c_low, c_high = c_range
-    mask = (df[df[main_x_value].between(main_low, main_high) & df[b_x_value].between(b_low, b_high) &
-               df[c_x_value].between(c_low, c_high)])
+    mainx_low, mainx_high = mainx_range
+    mainy_low, mainy_high = mainy_range
+    bx_low, bx_high = bx_range
+    by_low, by_high = by_range
+    cx_low, cx_high = cx_range
+    cy_low, cy_high = cy_range
+    
+    mask = (df[df[mainx_value].between(mainx_low, mainx_high) & df[mainy_value].between(mainy_low, mainy_high) &
+               df[bx_value].between(bx_low, bx_high) &
+               df[cx_value].between(cx_low, cx_high) & df[by_value].between(by_low, by_high) &
+               df[cy_value].between(cy_low, cy_high)])
 
-    tl_fig = px.scatter(mask, x=main_x_value, y=main_y_value, color=main_z_value, color_continuous_scale='viridis')
+    tl_fig = px.scatter(mask, x=mainx_value, y=mainy_value, color=mainz_value, color_continuous_scale='viridis')
 
     return tl_fig
 
@@ -180,24 +238,39 @@ def update_tl_fig(main_x_value, main_y_value, main_z_value, main_range, b_x_valu
     [Input('bl_x_dropdown', 'value'),
      Input('bl_y_dropdown', 'value'),
      Input('bl_z_dropdown', 'value'),
-     Input('bl_slider', 'value'),
+     Input('blx_slider', 'value'),
+     Input('bly_slider', 'value'),
      Input('tl_x_dropdown', 'value'),
-     Input('tl_slider', 'value'),
+     Input('tl_y_dropdown', 'value'),
+     Input('tl_z_dropdown', 'value'),
+     Input('tlx_slider', 'value'),
+     Input('tly_slider', 'value'),
      Input('br_x_dropdown', 'value'),
-     Input('br_slider', 'value')
+     Input('br_y_dropdown', 'value'),
+     Input('br_z_dropdown', 'value'),
+     Input('brx_slider', 'value'),
+     Input('bry_slider', 'value'),
      ])
+
 # Function to create and update map depending on stage selected
-def update_bl_fig(main_x_value, main_y_value, main_z_value, main_range, b_x_value, b_range, c_x_value, c_range):
+def update_tl_fig(mainx_value, mainy_value, mainz_value, mainx_range, mainy_range, bx_value, by_value, bz_value,
+                  bx_range, by_range, cx_value, cy_value, cz_value, cx_range, cy_range):
+    
+    mainx_low, mainx_high = mainx_range
+    mainy_low, mainy_high = mainy_range
+    bx_low, bx_high = bx_range
+    by_low, by_high = by_range
+    cx_low, cx_high = cx_range
+    cy_low, cy_high = cy_range
 
-    main_low, main_high = main_range
-    b_low, b_high = b_range
-    c_low, c_high = c_range
-    mask = (df[df[main_x_value].between(main_low, main_high) & df[b_x_value].between(b_low, b_high) &
-               df[c_x_value].between(c_low, c_high)])
+    mask = (df[df[mainx_value].between(mainx_low, mainx_high) & df[mainy_value].between(mainy_low, mainy_high) & df[
+        bx_value].between(bx_low, bx_high) &
+               df[cx_value].between(cx_low, cx_high) & df[by_value].between(by_low, by_high) &
+               df[cy_value].between(cy_low, cy_high)])
 
-    bl_fig = px.scatter(mask, x=main_x_value, y=main_y_value, color=main_z_value, color_continuous_scale='viridis')
+    tl_fig = px.scatter(mask, x=mainx_value, y=mainy_value, color=mainz_value, color_continuous_scale='viridis')
 
-    return bl_fig
+    return tl_fig
 
 # BR
 @callback(
@@ -205,24 +278,38 @@ def update_bl_fig(main_x_value, main_y_value, main_z_value, main_range, b_x_valu
     [Input('br_x_dropdown', 'value'),
      Input('br_y_dropdown', 'value'),
      Input('br_z_dropdown', 'value'),
-     Input('br_slider', 'value'),
+     Input('brx_slider', 'value'),
+     Input('bry_slider', 'value'),
      Input('tl_x_dropdown', 'value'),
-     Input('tl_slider', 'value'),
+     Input('tl_y_dropdown', 'value'),
+     Input('tl_z_dropdown', 'value'),
+     Input('tlx_slider', 'value'),
+     Input('tly_slider', 'value'),
      Input('bl_x_dropdown', 'value'),
-     Input('bl_slider', 'value')
+     Input('bl_y_dropdown', 'value'),
+     Input('bl_z_dropdown', 'value'),
+     Input('blx_slider', 'value'),
+     Input('bly_slider', 'value'),
      ])
+
 # Function to create and update map depending on stage selected
-def update_br_fig(main_x_value, main_y_value, main_z_value, main_range, b_x_value, b_range, c_x_value, c_range):
+def update_tl_fig(mainx_value, mainy_value, mainz_value, mainx_range, mainy_range, bx_value, by_value, bz_value,
+                  bx_range, by_range, cx_value, cy_value, cz_value, cx_range, cy_range):
+    
+    mainx_low, mainx_high = mainx_range
+    mainy_low, mainy_high = mainy_range
+    bx_low, bx_high = bx_range
+    by_low, by_high = by_range
+    cx_low, cx_high = cx_range
+    cy_low, cy_high = cy_range
 
-    main_low, main_high = main_range
-    b_low, b_high = b_range
-    c_low, c_high = c_range
-    mask = (df[df[main_x_value].between(main_low, main_high) & df[b_x_value].between(b_low, b_high) &
-               df[c_x_value].between(c_low, c_high)])
+    mask = (df[df[mainx_value].between(mainx_low, mainx_high) & df[mainy_value].between(mainy_low, mainy_high) &
+               df[bx_value].between(bx_low, bx_high) & df[cx_value].between(cx_low, cx_high) &
+               df[by_value].between(by_low, by_high) & df[cy_value].between(cy_low, cy_high)])
 
-    br_fig = px.scatter(mask, x=main_x_value, y=main_y_value, color=main_z_value, color_continuous_scale='viridis')
+    tl_fig = px.scatter(mask, x=mainx_value, y=mainy_value, color=mainz_value, color_continuous_scale='viridis')
 
-    return br_fig
+    return tl_fig
 
 
 # QQ-Plot Callbacks
@@ -230,37 +317,51 @@ def update_br_fig(main_x_value, main_y_value, main_z_value, main_range, b_x_valu
     Output('QQ_plot', 'figure'),
     [Input('QQ_log_dropdown', 'value'),
      Input('tl_x_dropdown', 'value'),
-     Input('tl_slider', 'value'),
+     Input('tlx_slider', 'value'),
+     Input('tl_y_dropdown', 'value'),
+     Input('tly_slider', 'value'),
      Input('bl_x_dropdown', 'value'),
-     Input('bl_slider', 'value'),
+     Input('blx_slider', 'value'),
+     Input('bl_y_dropdown', 'value'),
+     Input('bly_slider', 'value'),
      Input('br_x_dropdown', 'value'),
-     Input('br_slider', 'value')
+     Input('brx_slider', 'value'),
+     Input('br_y_dropdown', 'value'),
+     Input('bry_slider', 'value'),
      ])
-def update_QQ(log, a_x_value, a_range, b_x_value, b_range, c_x_value, c_range):
 
-    a_low, a_high = a_range
-    b_low, b_high = b_range
-    c_low, c_high = c_range
-    mask = (df[df[a_x_value].between(a_low, a_high) & df[b_x_value].between(b_low, b_high) &
-            df[c_x_value].between(c_low, c_high)])
+def update_QQ(log, ax_value, ax_range, ay_value, ay_range, bx_value, bx_range, by_value, by_range, cx_value, cx_range,
+              cy_value, cy_range):
+
+    ax_low, ax_high = ax_range
+    ay_low, ay_high = ay_range
+    bx_low, bx_high = bx_range
+    by_low, by_high = by_range
+    cx_low, cx_high = cx_range
+    cy_low, cy_high = cy_range
+
+    mask = (df[df[ax_value].between(ax_low, ax_high) & df[ay_value].between(ay_low, ay_high) &
+               df[bx_value].between(bx_low, bx_high) & df[by_value].between(by_low, by_high) &
+               df[cx_value].between(cx_low, cx_high) & df[cy_value].between(cy_low, cy_high)])
 
     QQ_plot = go.Figure()
+
+    QQ_plot.add_trace(go.Scatter(x=[1, 5, 10, 30, 50, 70, 90, 95, 99],
+                                 y=[10.177, 4.72, 2.65, 0.995, 0.614, 0.412, 0.258, 0.217, 0.175], name="Observed",
+                                 marker_color='rgba(0,0,0,0.5)'))
+    QQ_plot.add_trace(go.Scatter(x=[1, 5, 10, 30, 50, 70, 90, 95, 99],
+                                 y=[10.177, 4.72, 2.65, 0.995, 0.614, 0.412, 0.258, 0.217, 0.175],
+                                 marker_color='rgba(0,0,0,0.5)', showlegend=False))
+
     for idx, row in mask.iterrows():
         QQ_plot.add_trace(
             go.Scatter(
                 x=[1, 5, 10, 30, 50, 70, 90, 95, 99],
                 y=[row['Q1'], row['Q5'], row['Q10'], row['Q30'], row['Q50'], row['Q70'],
                    row['Q90'], row['Q95'], row['Q99']],
-                mode="lines", showlegend=False, marker_color=trace_cols[idx % 8]
+                mode="lines", showlegend=True, marker_color=trace_cols[idx % 8]
             )
         )
-    QQ_plot.add_trace(go.Scatter(x=[1, 5, 10, 30, 50, 70, 90, 95, 99],
-                               y=[10.177, 4.72, 2.65, 0.995, 0.614, 0.412, 0.258, 0.217, 0.175], name="Observed",
-                               marker_color='rgba(0,0,0,0.5)'))
-    QQ_plot.add_trace(go.Scatter(x=[1, 5, 10, 30, 50, 70, 90, 95, 99],
-                               y=[10.177, 4.72, 2.65, 0.995, 0.614, 0.412, 0.258, 0.217, 0.175],
-                               marker_color='rgba(0,0,0,0.5)', showlegend=False))
-    QQ_plot.update_layout(xaxis=dict(title='Quantile'), yaxis=dict(title='Flow'))
 
     if log == 'Yes':
         QQ_plot.update_yaxes(title='Flow (Log)', type="log")
