@@ -7,7 +7,6 @@ def pull_data():
     dfs = []
     for file in filenames:
         # reading csv files
-        print("\nReading file = ",file)
         dfs.append(pd.read_csv(file, header=3, index_col=False))
 
     big_data = pd.concat(dfs, ignore_index=True)

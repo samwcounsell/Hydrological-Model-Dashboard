@@ -36,14 +36,14 @@ layout = html.Div([
     dbc.Row([
         
         dbc.Col(dcc.Dropdown(id='tl_x_dropdown', options=x_options, value='Arable_CMax',
-                         style={'width': 400, 'textAlign': 'center', 'font-size': 'x-small'})),
+                         style={'textAlign': 'center', 'font-size': 'x-small'})),
         dbc.Col(dcc.Dropdown(id='tl_y_dropdown', options=y_options, value='VolError(%)',
-                         style={'width': 400, 'textAlign': 'center', 'font-size': 'x-small'})),
+                         style={'textAlign': 'center', 'font-size': 'x-small'})),
         dbc.Col(dcc.Dropdown(id='tl_z_dropdown', options=y_options, value='RMSE',
-                         style={'width': 400, 'textAlign': 'center', 'font-size': 'x-small'})),
+                         style={'textAlign': 'center', 'font-size': 'x-small'})),
         dbc.Col(html.P("")),
         dbc.Col(dcc.Dropdown(id='QQ_log_dropdown', options=['Yes', 'No'], value='No',
-                         style={'width': 400, 'textAlign': 'center', 'font-size': 'x-small'})),
+                         style={'textAlign': 'center', 'font-size': 'x-small'})),
 
     ], style={"display": "grid", "grid-template-columns": "15% 15% 15% 20% 40%"}),
     
@@ -83,18 +83,18 @@ layout = html.Div([
     dbc.Row([
 
         dbc.Col(dcc.Dropdown(id='bl_x_dropdown', options=x_options, value='Arable_CMax',
-                         style={'width': 400, 'textAlign': 'center', 'font-size': 'x-small'})),
+                         style={'textAlign': 'center', 'font-size': 'x-small'})),
         dbc.Col(dcc.Dropdown(id='bl_y_dropdown', options=y_options, value='VolError(%)',
-                         style={'width': 400, 'textAlign': 'center', 'font-size': 'x-small'})),
+                         style={'textAlign': 'center', 'font-size': 'x-small'})),
         dbc.Col(dcc.Dropdown(id='bl_z_dropdown', options=y_options, value='RMSE',
-                         style={'width': 400, 'textAlign': 'center', 'font-size': 'x-small'})),
+                         style={'textAlign': 'center', 'font-size': 'x-small'})),
         dbc.Col(html.P("")),
         dbc.Col(dcc.Dropdown(id='br_x_dropdown', options=x_options, value='Arable_CMax',
-                         style={'width': 400, 'textAlign': 'center', 'font-size': 'x-small'})),
+                         style={'textAlign': 'center', 'font-size': 'x-small'})),
         dbc.Col(dcc.Dropdown(id='br_y_dropdown', options=y_options, value='VolError(%)',
-                         style={'width': 400, 'textAlign': 'center', 'font-size': 'x-small'})),
+                         style={'textAlign': 'center', 'font-size': 'x-small'})),
         dbc.Col(dcc.Dropdown(id='br_z_dropdown', options=y_options, value='RMSE',
-                         style={'width': 400, 'textAlign': 'center', 'font-size': 'x-small'}))
+                         style={'textAlign': 'center', 'font-size': 'x-small'}))
 
     ], style={"display": "grid", "grid-template-columns": "15% 15% 15% 10% 15% 15% 15%"}),
     
