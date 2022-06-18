@@ -1,13 +1,14 @@
-from dash import dcc, html, Input, Output, callback
+from dash import dcc, html, Input, Output, callback, dash_table, State
 import dash_bootstrap_components as dbc
 import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
+import base64
+import io
+import datetime
 
 from components.navbar import create_navbar
 from functions.data_reading import pull_data
-
-navbar = create_navbar()
 
 df = pull_data()
 vars = list(df)
@@ -17,135 +18,80 @@ y_options = vars[-17:-9]
 del (y_options[2:4])
 x_options = vars[:-17]
 
-min_val = 0
-max_val = 1000
+min_val_tlx, min_val_tly, min_val_blx, min_val_bly, min_val_brx, min_val_bry = 0, -1, 0, -1, 0, -1
+max_val_tlx, max_val_tly, max_val_blx, max_val_bly, max_val_brx, max_val_bry = 1000, 1000, 1000, 1000, 1000, 1000
 
 trace_cols = ['seagreen', 'blue', 'cornflowerblue', 'lightgreen', 'forestgreen', 'gold', 'lightblue', 'lightgreen']
 
-# Page layout
 layout = html.Div([
 
-    navbar,
-    html.H1(
-        children=' Kestrel-IHM 3-Dimensional Plot',
-        style={'textAlign': 'center', 'padding': 30}
+    dcc.Upload(
+        id='upload-data',
+        children=html.Div([
+            'Drag and Drop or ',
+            html.A('Select Files')
+        ]),
+        style={
+            'width': '100%',
+            'height': '60px',
+            'lineHeight': '60px',
+            'borderWidth': '1px',
+            'borderStyle': 'dashed',
+            'borderRadius': '5px',
+            'textAlign': 'center',
+            'margin': '10px'
+        },
+        # Allow multiple files to be uploaded
+        multiple=True
     ),
-    dbc.Row([
-        dbc.Col(
-            html.H6(children='x-axis Variable:'), width={'size': 2, 'offset': 4}
+    html.Div(id='output-data-upload')
+
+    ])
+
+def parse_contents(contents, filename, date):
+    content_type, content_string = contents.split(',')
+
+    decoded = base64.b64decode(content_string)
+    try:
+        if 'csv' in filename:
+            # Assume that the user uploaded a CSV file
+            df = pd.read_csv(
+                io.StringIO(decoded.decode('utf-8')))
+        elif 'xls' in filename:
+            # Assume that the user uploaded an excel file
+            df = pd.read_excel(io.BytesIO(decoded))
+    except Exception as e:
+        print(e)
+        return html.Div([
+            'There was an error processing this file.'
+        ])
+
+    return html.Div([
+        html.H5(filename),
+        html.H6(datetime.datetime.fromtimestamp(date)),
+
+        dash_table.DataTable(
+            df.to_dict('records'),
+            [{'name': i, 'id': i} for i in df.columns]
         ),
-        dbc.Col(
-            dcc.Dropdown(id='x_dropdown', options=x_options, value='Arable_CMax',
-                         style={'width': 400, 'textAlign': 'center', 'font-size': 'x-small'})
-        )
-    ]),
-    dbc.Row([
-        dbc.Col(
-            html.H6(children='y-axis Variable:'), width={'size': 2, 'offset': 4}
-        ),
-        dbc.Col(
-            dcc.Dropdown(id='y_dropdown', options=y_options, value='VolError(%)',
-                         style={'width': 400, 'textAlign': 'center', 'font-size': 'x-small'})
-        )
-    ]),
-    dbc.Row([
-        dbc.Col(
-            html.H6(children='Gradient Variable:'), width={'size': 2, 'offset': 4}
-        ),
-        dbc.Col(
-            dcc.Dropdown(id='z_dropdown', options=y_options, value='RMSE',
-                         style={'width': 400, 'textAlign': 'center', 'font-size': 'x-small'})
-        )
-    ]),
-    dbc.Row([
-        dbc.Col(
-            html.H6(children='Log y-axis (QQ-Plot):'), width={'size': 2, 'offset': 4}
-        ),
-        dbc.Col(
-            dcc.Dropdown(id='log_dropdown', options=['Yes', 'No'], value='No',
-                         style={'width': 400, 'textAlign': 'center', 'font-size': 'x-small'})
-        )
-    ]),
-    dbc.Row([
-        dbc.Col(
-            dcc.Graph(id='main_fig', style={'width': '100%', 'height': 950}),
-        ),
-        dbc.Col(
-            dcc.Graph(id='q_fig', style={'width': '100%', 'height': 950})
-        )
-    ]),
-    dbc.Row([
-        dbc.Col(
-            html.P(""),
-        ),
-        dbc.Col(
-            html.P("x-axis Data Range:"),
-        ),
-        dbc.Col(
-            dcc.RangeSlider(id='slider', min=min_val, max=max_val, value=[min_val, max_val])
-        )
-    ], style={"display": "grid", "grid-template-columns": "5% 10% 75%"})
 
-])
+        html.Hr(),  # horizontal line
 
+        # For debugging, display the raw contents provided by the web browser
+        html.Div('Raw Content'),
+        html.Pre(contents[0:200] + '...', style={
+            'whiteSpace': 'pre-wrap',
+            'wordBreak': 'break-all'
+        })
+    ])
 
-# Callback for figure A
-@callback(
-    [Output('slider', 'min'),
-     Output('slider', 'max')],
-    Input('x_dropdown', 'value'))
-def update_RS(x_value):
-    min_val = df[x_value].min()
-    max_val = df[x_value].max()
-    return min_val, max_val
-
-
-@callback(
-    Output('main_fig', 'figure'),
-    [Input('x_dropdown', 'value'),
-     Input('y_dropdown', 'value'),
-     Input('z_dropdown', 'value'),
-     Input('slider', 'value')])
-# Function to create and update map depending on stage selected
-def update_main_fig(x_value, y_value, z_value, range):
-    low, high = range
-    mask = (df[df[x_value].between(low, high)])
-
-    main_fig = px.scatter(mask, x=x_value, y=y_value, color=z_value, color_continuous_scale='viridis')
-
-    return main_fig
-
-
-@callback(
-    Output('q_fig', 'figure'),
-    [Input('x_dropdown', 'value'),
-     Input('slider', 'value'),
-     Input('log_dropdown', 'value')])
-def update_main(x_value, range, log):
-    low, high = range
-    q_mask = (df[df[x_value].between(low, high)])
-
-    q_fig = go.Figure()
-    for idx, row in q_mask.iterrows():
-        q_fig.add_trace(
-            go.Scatter(
-                x=[1, 5, 10, 30, 50, 70, 90, 95, 99],
-                y=[row['Q1'], row['Q5'], row['Q10'], row['Q30'], row['Q50'], row['Q70'],
-                   row['Q90'], row['Q95'], row['Q99']],
-                mode="lines", showlegend=False, marker_color=trace_cols[idx % 8]
-            )
-        )
-    q_fig.add_trace(go.Scatter(x=[1, 5, 10, 30, 50, 70, 90, 95, 99],
-                               y=[10.177, 4.72, 2.65, 0.995, 0.614, 0.412, 0.258, 0.217, 0.175], name="Observed",
-                               marker_color='rgba(0,0,0,0.5)'))
-    q_fig.add_trace(go.Scatter(x=[1, 5, 10, 30, 50, 70, 90, 95, 99],
-                               y=[10.177, 4.72, 2.65, 0.995, 0.614, 0.412, 0.258, 0.217, 0.175],
-                               marker_color='rgba(0,0,0,0.5)', showlegend=False))
-    q_fig.update_layout(xaxis=dict(title='Quantile'), yaxis=dict(title='Flow'))
-
-    if log == 'Yes':
-        q_fig.update_yaxes(title='Flow (Log)', type="log")
-    else:
-        q_fig.update_yaxes()
-
-    return q_fig
+@callback(Output('output-data-upload', 'children'),
+              Input('upload-data', 'contents'),
+              State('upload-data', 'filename'),
+              State('upload-data', 'last_modified'))
+def update_output(list_of_contents, list_of_names, list_of_dates):
+    if list_of_contents is not None:
+        children = [
+            parse_contents(c, n, d) for c, n, d in
+            zip(list_of_contents, list_of_names, list_of_dates)]
+        return children

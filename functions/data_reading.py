@@ -3,6 +3,7 @@ import glob
 
 def pull_data():
     path = 'data'
+    #path = r'C:\Users\samwc\Desktop\New'
     filenames = glob.glob(path + "\*.csv")
     dfs = []
     for file in filenames:

@@ -3,6 +3,7 @@ import dash_bootstrap_components as dbc
 import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
+import glob
 
 from components.navbar import create_navbar
 from functions.data_reading import pull_data
@@ -10,6 +11,8 @@ from functions.data_reading import pull_data
 navbar = create_navbar()
 
 df = pull_data()
+types = 'text'
+
 vars = list(df)
 
 q = vars[-9:]
@@ -31,7 +34,7 @@ layout = html.Div([
         children=' Kestrel-IHM 3-Dimensional Plot',
         style={'textAlign': 'center', 'padding': 30}
     ),
-    
+
     # X, Y, Z       log
     dbc.Row([
         
@@ -82,14 +85,14 @@ layout = html.Div([
 
     dbc.Row([
 
-        dbc.Col(dcc.Dropdown(id='bl_x_dropdown', options=x_options, value='Arable_CMax',
+        dbc.Col(dcc.Dropdown(id='bl_x_dropdown', options=x_options, value='Forestry_CMax',
                          style={'textAlign': 'center', 'font-size': 'x-small'})),
         dbc.Col(dcc.Dropdown(id='bl_y_dropdown', options=y_options, value='VolError(%)',
                          style={'textAlign': 'center', 'font-size': 'x-small'})),
         dbc.Col(dcc.Dropdown(id='bl_z_dropdown', options=y_options, value='RMSE',
                          style={'textAlign': 'center', 'font-size': 'x-small'})),
         dbc.Col(html.P("")),
-        dbc.Col(dcc.Dropdown(id='br_x_dropdown', options=x_options, value='Arable_CMax',
+        dbc.Col(dcc.Dropdown(id='br_x_dropdown', options=x_options, value='Urban_CMax',
                          style={'textAlign': 'center', 'font-size': 'x-small'})),
         dbc.Col(dcc.Dropdown(id='br_y_dropdown', options=y_options, value='VolError(%)',
                          style={'textAlign': 'center', 'font-size': 'x-small'})),
@@ -122,7 +125,7 @@ layout = html.Div([
 
     ], style={"display": "grid", "grid-template-columns": "5% 40% 15% 40%"}),
     
-dbc.Row([
+    dbc.Row([
 
         dbc.Col(html.P("")),
         dbc.Col(dcc.RangeSlider(id='bly_slider', min=min_val_bly, max=max_val_bly, value=[min_val_bly, max_val_bly])),
@@ -130,6 +133,27 @@ dbc.Row([
         dbc.Col(dcc.RangeSlider(id='bry_slider', min=min_val_bry, max=max_val_bry, value=[min_val_bry, max_val_bry]))
 
     ], style={"display": "grid", "grid-template-columns": "5% 40% 15% 40%"}),
+
+    dbc.Row([
+
+        dbc.Col(html.P(""))
+
+    ]),
+
+    dbc.Row([
+
+        dbc.Col(html.P("Paste filepath below:", style={'textAlign': 'center'}))
+
+    ]),
+
+    # Data Collection
+    dbc.Row([
+
+        dbc.Col(html.P("")),
+        dcc.Input(id="filepath", type='text', value='data', style={'fontsize': 'small'}),
+        dbc.Col(html.P(""))
+
+    ], style={"display": "grid", "grid-template-columns": "10% 80% 10%"}),
     
 ])
 
@@ -211,10 +235,18 @@ def update_BRYS(y_value):
      Input('br_z_dropdown', 'value'),
      Input('brx_slider', 'value'),
      Input('bry_slider', 'value'),
+     Input('filepath', 'value')
      ])
 
 # Function to create and update map depending on stage selected
-def update_tl_fig(mainx_value, mainy_value, mainz_value, mainx_range, mainy_range, bx_value, by_value, bz_value, bx_range, by_range, cx_value, cy_value, cz_value, cx_range, cy_range):
+def update_tl_fig(mainx_value, mainy_value, mainz_value, mainx_range, mainy_range, bx_value, by_value, bz_value, bx_range, by_range, cx_value, cy_value, cz_value, cx_range, cy_range, filepath):
+
+    filenames = glob.glob(filepath + "\*.csv")
+    dfs = []
+    for file in filenames:
+        # reading csv files
+        dfs.append(pd.read_csv(file, header=3, index_col=False))
+    df = pd.concat(dfs, ignore_index=True)
 
     mainx_low, mainx_high = mainx_range
     mainy_low, mainy_high = mainy_range
@@ -250,11 +282,19 @@ def update_tl_fig(mainx_value, mainy_value, mainz_value, mainx_range, mainy_rang
      Input('br_z_dropdown', 'value'),
      Input('brx_slider', 'value'),
      Input('bry_slider', 'value'),
+     Input('filepath', 'value')
      ])
 
 # Function to create and update map depending on stage selected
-def update_tl_fig(mainx_value, mainy_value, mainz_value, mainx_range, mainy_range, bx_value, by_value, bz_value,
-                  bx_range, by_range, cx_value, cy_value, cz_value, cx_range, cy_range):
+def update_bl_fig(mainx_value, mainy_value, mainz_value, mainx_range, mainy_range, bx_value, by_value, bz_value,
+                  bx_range, by_range, cx_value, cy_value, cz_value, cx_range, cy_range, filepath):
+
+    filenames = glob.glob(filepath + "\*.csv")
+    dfs = []
+    for file in filenames:
+        # reading csv files
+        dfs.append(pd.read_csv(file, header=3, index_col=False))
+    df = pd.concat(dfs, ignore_index=True)
     
     mainx_low, mainx_high = mainx_range
     mainy_low, mainy_high = mainy_range
@@ -268,9 +308,9 @@ def update_tl_fig(mainx_value, mainy_value, mainz_value, mainx_range, mainy_rang
                df[cx_value].between(cx_low, cx_high) & df[by_value].between(by_low, by_high) &
                df[cy_value].between(cy_low, cy_high)])
 
-    tl_fig = px.scatter(mask, x=mainx_value, y=mainy_value, color=mainz_value, color_continuous_scale='viridis')
+    bl_fig = px.scatter(mask, x=mainx_value, y=mainy_value, color=mainz_value, color_continuous_scale='viridis')
 
-    return tl_fig
+    return bl_fig
 
 # BR
 @callback(
@@ -290,12 +330,20 @@ def update_tl_fig(mainx_value, mainy_value, mainz_value, mainx_range, mainy_rang
      Input('bl_z_dropdown', 'value'),
      Input('blx_slider', 'value'),
      Input('bly_slider', 'value'),
+     Input('filepath', 'value')
      ])
 
 # Function to create and update map depending on stage selected
-def update_tl_fig(mainx_value, mainy_value, mainz_value, mainx_range, mainy_range, bx_value, by_value, bz_value,
-                  bx_range, by_range, cx_value, cy_value, cz_value, cx_range, cy_range):
-    
+def update_br_fig(mainx_value, mainy_value, mainz_value, mainx_range, mainy_range, bx_value, by_value, bz_value,
+                  bx_range, by_range, cx_value, cy_value, cz_value, cx_range, cy_range, filepath):
+
+    filenames = glob.glob(filepath + "\*.csv")
+    dfs = []
+    for file in filenames:
+        # reading csv files
+        dfs.append(pd.read_csv(file, header=3, index_col=False))
+    df = pd.concat(dfs, ignore_index=True)
+
     mainx_low, mainx_high = mainx_range
     mainy_low, mainy_high = mainy_range
     bx_low, bx_high = bx_range
@@ -307,9 +355,9 @@ def update_tl_fig(mainx_value, mainy_value, mainz_value, mainx_range, mainy_rang
                df[bx_value].between(bx_low, bx_high) & df[cx_value].between(cx_low, cx_high) &
                df[by_value].between(by_low, by_high) & df[cy_value].between(cy_low, cy_high)])
 
-    tl_fig = px.scatter(mask, x=mainx_value, y=mainy_value, color=mainz_value, color_continuous_scale='viridis')
+    br_fig = px.scatter(mask, x=mainx_value, y=mainy_value, color=mainz_value, color_continuous_scale='viridis')
 
-    return tl_fig
+    return br_fig
 
 
 # QQ-Plot Callbacks
@@ -328,10 +376,18 @@ def update_tl_fig(mainx_value, mainy_value, mainz_value, mainx_range, mainy_rang
      Input('brx_slider', 'value'),
      Input('br_y_dropdown', 'value'),
      Input('bry_slider', 'value'),
+     Input('filepath', 'value')
      ])
 
 def update_QQ(log, ax_value, ax_range, ay_value, ay_range, bx_value, bx_range, by_value, by_range, cx_value, cx_range,
-              cy_value, cy_range):
+              cy_value, cy_range, filepath):
+
+    filenames = glob.glob(filepath + "\*.csv")
+    dfs = []
+    for file in filenames:
+        # reading csv files
+        dfs.append(pd.read_csv(file, header=3, index_col=False))
+    df = pd.concat(dfs, ignore_index=True)
 
     ax_low, ax_high = ax_range
     ay_low, ay_high = ay_range
@@ -369,3 +425,21 @@ def update_QQ(log, ax_value, ax_range, ay_value, ay_range, bx_value, bx_range, b
         QQ_plot.update_yaxes()
 
     return QQ_plot
+
+# Data callback
+@callback(
+    Output('df', 'value'),
+    Input('filepath', 'value'),
+)
+
+def data_file_update(filepath):
+
+    filenames = glob.glob(filepath + "\*.csv")
+    dfs = []
+    for file in filenames:
+        # reading csv files
+        dfs.append(pd.read_csv(file, header=3, index_col=False))
+
+    df = pd.concat(dfs, ignore_index=True)
+
+    return df
