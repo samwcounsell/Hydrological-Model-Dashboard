@@ -1,9 +1,8 @@
 from dash import dcc, html, Input, Output, callback
 import dash_bootstrap_components as dbc
-import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
-import glob
+
 
 from components.navbar import create_navbar
 from functions.data_reading import pull_data
