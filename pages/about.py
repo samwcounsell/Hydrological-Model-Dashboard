@@ -8,4 +8,8 @@ layout = html.Div([
 
     navbar,
 
+    html.P("Data Types: Currently only works with csv files"),
+    html.P("Works for any number of input variables as long as the number and order of Quantile columns, and number "
+           "of Output columns remain fixed.")
+
 ])

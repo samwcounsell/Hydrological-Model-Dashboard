@@ -10,7 +10,7 @@ from functions.data_reading import pull_data
 
 navbar = create_navbar()
 
-df = pull_data()
+df = pull_data('data')
 types = 'text'
 
 vars = list(df)
@@ -241,12 +241,7 @@ def update_BRYS(y_value):
 # Function to create and update map depending on stage selected
 def update_tl_fig(mainx_value, mainy_value, mainz_value, mainx_range, mainy_range, bx_value, by_value, bz_value, bx_range, by_range, cx_value, cy_value, cz_value, cx_range, cy_range, filepath):
 
-    filenames = glob.glob(filepath + "\*.csv")
-    dfs = []
-    for file in filenames:
-        # reading csv files
-        dfs.append(pd.read_csv(file, header=3, index_col=False))
-    df = pd.concat(dfs, ignore_index=True)
+    df = pull_data(filepath)
 
     mainx_low, mainx_high = mainx_range
     mainy_low, mainy_high = mainy_range
@@ -289,12 +284,7 @@ def update_tl_fig(mainx_value, mainy_value, mainz_value, mainx_range, mainy_rang
 def update_bl_fig(mainx_value, mainy_value, mainz_value, mainx_range, mainy_range, bx_value, by_value, bz_value,
                   bx_range, by_range, cx_value, cy_value, cz_value, cx_range, cy_range, filepath):
 
-    filenames = glob.glob(filepath + "\*.csv")
-    dfs = []
-    for file in filenames:
-        # reading csv files
-        dfs.append(pd.read_csv(file, header=3, index_col=False))
-    df = pd.concat(dfs, ignore_index=True)
+    df = pull_data(filepath)
     
     mainx_low, mainx_high = mainx_range
     mainy_low, mainy_high = mainy_range
@@ -337,12 +327,7 @@ def update_bl_fig(mainx_value, mainy_value, mainz_value, mainx_range, mainy_rang
 def update_br_fig(mainx_value, mainy_value, mainz_value, mainx_range, mainy_range, bx_value, by_value, bz_value,
                   bx_range, by_range, cx_value, cy_value, cz_value, cx_range, cy_range, filepath):
 
-    filenames = glob.glob(filepath + "\*.csv")
-    dfs = []
-    for file in filenames:
-        # reading csv files
-        dfs.append(pd.read_csv(file, header=3, index_col=False))
-    df = pd.concat(dfs, ignore_index=True)
+    df = pull_data(filepath)
 
     mainx_low, mainx_high = mainx_range
     mainy_low, mainy_high = mainy_range
@@ -382,12 +367,7 @@ def update_br_fig(mainx_value, mainy_value, mainz_value, mainx_range, mainy_rang
 def update_QQ(log, ax_value, ax_range, ay_value, ay_range, bx_value, bx_range, by_value, by_range, cx_value, cx_range,
               cy_value, cy_range, filepath):
 
-    filenames = glob.glob(filepath + "\*.csv")
-    dfs = []
-    for file in filenames:
-        # reading csv files
-        dfs.append(pd.read_csv(file, header=3, index_col=False))
-    df = pd.concat(dfs, ignore_index=True)
+    df = pull_data(filepath)
 
     ax_low, ax_high = ax_range
     ay_low, ay_high = ay_range
@@ -425,21 +405,3 @@ def update_QQ(log, ax_value, ax_range, ay_value, ay_range, bx_value, bx_range, b
         QQ_plot.update_yaxes()
 
     return QQ_plot
-
-# Data callback
-@callback(
-    Output('df', 'value'),
-    Input('filepath', 'value'),
-)
-
-def data_file_update(filepath):
-
-    filenames = glob.glob(filepath + "\*.csv")
-    dfs = []
-    for file in filenames:
-        # reading csv files
-        dfs.append(pd.read_csv(file, header=3, index_col=False))
-
-    df = pd.concat(dfs, ignore_index=True)
-
-    return df

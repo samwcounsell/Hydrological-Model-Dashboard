@@ -1,7 +1,7 @@
 from dash import Dash, dcc, html, Input, Output, callback
 import dash_bootstrap_components as dbc
 
-from pages import home, quad_plot, main_plot, about
+from pages import home, quad_plot, about
 
 app = Dash(__name__, suppress_callback_exceptions=True, external_stylesheets=[dbc.themes.LUX])
 server = app.server
@@ -20,8 +20,6 @@ def display_page(pathname):
         return about.layout
     elif pathname == '/quad_plot':
         return quad_plot.layout
-    elif pathname == '/main_plot':
-        return main_plot.layout
     else:
         return home.layout
 

@@ -13,7 +13,6 @@ def create_navbar():
                     dbc.DropdownMenuItem("Home", href='/'),
                     dbc.DropdownMenuItem(divider=True),
                     dbc.DropdownMenuItem("Quad Pot", href='/quad_plot'),
-                    dbc.DropdownMenuItem("Main Plot", href='/main_plot'),
                     dbc.DropdownMenuItem("About", href='/about')
                 ],
             ),
