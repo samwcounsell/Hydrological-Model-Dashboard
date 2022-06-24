@@ -5,7 +5,7 @@ import plotly.graph_objects as go
 
 
 from components.navbar import create_navbar
-from functions.data_reading import pull_data
+from functions.data_reading import pull_data, get_quantiles
 
 navbar = create_navbar()
 
@@ -17,6 +17,7 @@ vars = list(df)
 q = vars[-9:]
 y_options = vars[-17:-9]
 del (y_options[2:4])
+
 x_options = vars[:-17]
 
 min_val_tlx, min_val_tly, min_val_blx, min_val_bly, min_val_brx, min_val_bry = 0, -1, 0, -1, 0, -1
@@ -37,7 +38,7 @@ layout = html.Div([
     # X, Y, Z       log
     dbc.Row([
         
-        dbc.Col(dcc.Dropdown(id='tl_x_dropdown', options=x_options, value='Arable_CMax',
+        dbc.Col(dcc.Dropdown(id='tl_x_dropdown', options=x_options, value=x_options[0],
                          style={'textAlign': 'center', 'font-size': 'x-small'})),
         dbc.Col(dcc.Dropdown(id='tl_y_dropdown', options=y_options, value='VolError(%)',
                          style={'textAlign': 'center', 'font-size': 'x-small'})),
@@ -84,14 +85,14 @@ layout = html.Div([
 
     dbc.Row([
 
-        dbc.Col(dcc.Dropdown(id='bl_x_dropdown', options=x_options, value='Forestry_CMax',
+        dbc.Col(dcc.Dropdown(id='bl_x_dropdown', options=x_options, value=x_options[1],
                          style={'textAlign': 'center', 'font-size': 'x-small'})),
         dbc.Col(dcc.Dropdown(id='bl_y_dropdown', options=y_options, value='VolError(%)',
                          style={'textAlign': 'center', 'font-size': 'x-small'})),
         dbc.Col(dcc.Dropdown(id='bl_z_dropdown', options=y_options, value='RMSE',
                          style={'textAlign': 'center', 'font-size': 'x-small'})),
         dbc.Col(html.P("")),
-        dbc.Col(dcc.Dropdown(id='br_x_dropdown', options=x_options, value='Urban_CMax',
+        dbc.Col(dcc.Dropdown(id='br_x_dropdown', options=x_options, value=x_options[2],
                          style={'textAlign': 'center', 'font-size': 'x-small'})),
         dbc.Col(dcc.Dropdown(id='br_y_dropdown', options=y_options, value='VolError(%)',
                          style={'textAlign': 'center', 'font-size': 'x-small'})),
@@ -156,6 +157,28 @@ layout = html.Div([
     
 ])
 
+
+# Dropdown Callbacks
+@callback(
+    Output('tl_x_dropdown', 'options'),
+    Output('tl_y_dropdown', 'options'),
+    Output('tl_z_dropdown', 'options'),
+    Output('bl_x_dropdown', 'options'),
+    Output('bl_y_dropdown', 'options'),
+    Output('bl_z_dropdown', 'options'),
+    Output('br_x_dropdown', 'options'),
+    Output('br_y_dropdown', 'options'),
+    Output('br_z_dropdown', 'options'),
+    Input('filepath', 'value')
+)
+def update_TLO(filepath):
+
+    df = pull_data(filepath)
+    vars = list(df)
+    x_options = vars[:-17]
+    y_options = vars[-17:-9]
+
+    return(x_options, y_options, y_options, x_options, y_options, y_options, x_options, y_options, y_options)
 
 
 # Range Slider Updates
@@ -367,6 +390,8 @@ def update_QQ(log, ax_value, ax_range, ay_value, ay_range, bx_value, bx_range, b
               cy_value, cy_range, filepath):
 
     df = pull_data(filepath)
+    quantiles = list(get_quantiles(filepath))
+    print(quantiles)
 
     ax_low, ax_high = ax_range
     ay_low, ay_high = ay_range
@@ -382,10 +407,10 @@ def update_QQ(log, ax_value, ax_range, ay_value, ay_range, bx_value, bx_range, b
     QQ_plot = go.Figure()
 
     QQ_plot.add_trace(go.Scatter(x=[1, 5, 10, 30, 50, 70, 90, 95, 99],
-                                 y=[10.177, 4.72, 2.65, 0.995, 0.614, 0.412, 0.258, 0.217, 0.175], name="Observed",
+                                 y=quantiles, name = 'Observed',
                                  marker_color='rgba(0,0,0,0.5)'))
     QQ_plot.add_trace(go.Scatter(x=[1, 5, 10, 30, 50, 70, 90, 95, 99],
-                                 y=[10.177, 4.72, 2.65, 0.995, 0.614, 0.412, 0.258, 0.217, 0.175],
+                                 y=quantiles,
                                  marker_color='rgba(0,0,0,0.5)', showlegend=False))
 
     for idx, row in mask.iterrows():

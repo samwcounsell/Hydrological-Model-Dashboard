@@ -11,4 +11,23 @@ def pull_data(path):
 
     big_data = pd.concat(dfs, ignore_index=True)
 
+    col_names = list(big_data)
+
+    if 'Unnamed: 0' in col_names:
+        big_data.columns = big_data.iloc[0]
+        big_data = big_data.iloc[1:]
+
+    big_data = big_data.apply(pd.to_numeric)
+
     return big_data
+
+
+def get_quantiles(path):
+
+    filenames = glob.glob(path + "\*.csv")
+    df = pd.read_csv(filenames[0], header = 2, on_bad_lines = 'skip')
+    q = list(df)
+    q = q[1:10]
+    q = [float(i) for i in q]
+
+    return q
