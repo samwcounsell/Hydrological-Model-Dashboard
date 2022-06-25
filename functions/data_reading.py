@@ -14,10 +14,14 @@ def pull_data(path):
     col_names = list(big_data)
 
     if 'Unnamed: 0' in col_names:
-        big_data.columns = big_data.iloc[0]
-        big_data = big_data.iloc[1:]
+        dfs = []
+        for file in filenames:
+            # reading csv files
+            dfs.append(pd.read_csv(file, header=4, index_col=False))
 
-    big_data = big_data.apply(pd.to_numeric)
+        big_data = pd.concat(dfs, ignore_index=True)
+
+    #big_data = big_data.apply(pd.to_numeric)
 
     return big_data
 

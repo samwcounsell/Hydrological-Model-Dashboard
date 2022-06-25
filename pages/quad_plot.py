@@ -1,11 +1,13 @@
-from dash import dcc, html, Input, Output, callback
+from dash import dcc, html, Input, Output, callback, State
 import dash_bootstrap_components as dbc
 import plotly.express as px
 import plotly.graph_objects as go
-
+import pandas as pd
 
 from components.navbar import create_navbar
 from functions.data_reading import pull_data, get_quantiles
+
+pd.set_option('display.max_columns', None)
 
 navbar = create_navbar()
 
@@ -154,8 +156,26 @@ layout = html.Div([
         dbc.Col(html.P(""))
 
     ], style={"display": "grid", "grid-template-columns": "10% 80% 10%"}),
+
+    dbc.Row([
+
+        dcc.Store(id = 'memory')
+
+    ])
     
 ])
+
+
+# Data Callback
+#@callback(
+#    Output('memory', 'data'),
+#    Input('filepath', 'value'),
+#)
+#def retrieve_data(filepath):
+#    df = pull_data(filepath)
+#    print(df)
+#    df = df.to_json(orient = 'split')
+#    return(df)
 
 
 # Dropdown Callbacks
@@ -169,6 +189,15 @@ layout = html.Div([
     Output('br_x_dropdown', 'options'),
     Output('br_y_dropdown', 'options'),
     Output('br_z_dropdown', 'options'),
+    Output('tl_x_dropdown', 'value'),
+    Output('tl_y_dropdown', 'value'),
+    Output('tl_z_dropdown', 'value'),
+    Output('bl_x_dropdown', 'value'),
+    Output('bl_y_dropdown', 'value'),
+    Output('bl_z_dropdown', 'value'),
+    Output('br_x_dropdown', 'value'),
+    Output('br_y_dropdown', 'value'),
+    Output('br_z_dropdown', 'value'),
     Input('filepath', 'value')
 )
 def update_TLO(filepath):
@@ -178,64 +207,85 @@ def update_TLO(filepath):
     x_options = vars[:-17]
     y_options = vars[-17:-9]
 
-    return(x_options, y_options, y_options, x_options, y_options, y_options, x_options, y_options, y_options)
+    return(x_options, y_options, y_options, x_options, y_options, y_options, x_options, y_options, y_options,
+           x_options[0], y_options[-1], y_options[-2], x_options[1], y_options[-1], y_options[-2], x_options[2], y_options[-1], y_options[-2])
 
 
 # Range Slider Updates
 @callback(
     [Output('tlx_slider', 'min'),
-     Output('tlx_slider', 'max')],
-    Input('tl_x_dropdown', 'value'))
-def update_TLXS(x_value):
+     Output('tlx_slider', 'max'),
+     Output('tlx_slider', 'value')],
+    Input('tl_x_dropdown', 'value'),
+    Input('filepath', 'value'))
+def update_TLXS(x_value, filepath):
+    df = pull_data(filepath)
+    x_value = str(x_value)
     tlx_min_val = df[x_value].min()
     tlx_max_val = df[x_value].max()
-    return tlx_min_val, tlx_max_val
+    return tlx_min_val, tlx_max_val, [tlx_min_val, tlx_max_val]
+
 
 @callback(
     [Output('tly_slider', 'min'),
-     Output('tly_slider', 'max')],
-    Input('tl_y_dropdown', 'value'))
-def update_TLYS(y_value):
+     Output('tly_slider', 'max'),
+     Output('tly_slider', 'value')],
+    Input('tl_y_dropdown', 'value'),
+    Input('filepath', 'value'))
+def update_TLYS(y_value, filepath):
+    df = pull_data(filepath)
     tly_min_val = df[y_value].min()
     tly_max_val = df[y_value].max()
-    return tly_min_val, tly_max_val
+    return tly_min_val, tly_max_val, [tly_min_val, tly_max_val]
 
 @callback(
     [Output('blx_slider', 'min'),
-     Output('blx_slider', 'max')],
-    Input('bl_x_dropdown', 'value'))
-def update_BLXS(x_value):
+     Output('blx_slider', 'max'),
+     Output('blx_slider', 'value')],
+    Input('bl_x_dropdown', 'value'),
+    Input('filepath', 'value'))
+def update_BLXS(x_value, filepath):
+    df = pull_data(filepath)
     blx_min_val = df[x_value].min()
     blx_max_val = df[x_value].max()
-    return blx_min_val, blx_max_val
+    return blx_min_val, blx_max_val, [blx_min_val, blx_max_val]
 
 @callback(
     [Output('bly_slider', 'min'),
-     Output('bly_slider', 'max')],
-    Input('bl_y_dropdown', 'value'))
-def update_BLYS(y_value):
+     Output('bly_slider', 'max'),
+     Output('bly_slider', 'value')],
+    Input('bl_y_dropdown', 'value'),
+    Input('filepath', 'value'))
+def update_BLYS(y_value, filepath):
+    df = pull_data(filepath)
     bly_min_val = df[y_value].min()
     bly_max_val = df[y_value].max()
-    return bly_min_val, bly_max_val
+    return bly_min_val, bly_max_val, [bly_min_val, bly_max_val]
 
 
 @callback(
     [Output('brx_slider', 'min'),
-     Output('brx_slider', 'max')],
-    Input('br_x_dropdown', 'value'))
-def update_BRXS(x_value):
+     Output('brx_slider', 'max'),
+     Output('brx_slider', 'value')],
+    Input('br_x_dropdown', 'value'),
+    Input('filepath', 'value'))
+def update_BRXS(x_value, filepath):
+    df = pull_data(filepath)
     brx_min_val = df[x_value].min()
     brx_max_val = df[x_value].max()
-    return brx_min_val, brx_max_val
+    return brx_min_val, brx_max_val, [brx_min_val, brx_max_val]
 
 @callback(
     [Output('bry_slider', 'min'),
-     Output('bry_slider', 'max')],
-    Input('br_y_dropdown', 'value'))
-def update_BRYS(y_value):
+     Output('bry_slider', 'max'),
+     Output('bry_slider', 'value')],
+    Input('br_y_dropdown', 'value'),
+    Input('filepath', 'value'))
+def update_BRYS(y_value, filepath):
+    df = pull_data(filepath)
     bry_min_val = df[y_value].min()
     bry_max_val = df[y_value].max()
-    return bry_min_val, bry_max_val
+    return bry_min_val, bry_max_val, [bry_min_val, bry_max_val]
 
 # Standard plot Callbacks
 
@@ -391,7 +441,6 @@ def update_QQ(log, ax_value, ax_range, ay_value, ay_range, bx_value, bx_range, b
 
     df = pull_data(filepath)
     quantiles = list(get_quantiles(filepath))
-    print(quantiles)
 
     ax_low, ax_high = ax_range
     ay_low, ay_high = ay_range
