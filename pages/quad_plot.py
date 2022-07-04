@@ -168,15 +168,13 @@ layout = html.Div([
 
 
 # Data Callback
-#@callback(
-#    Output('memory', 'data'),
-#    Input('filepath', 'value'),
-#)
-#def retrieve_data(filepath):
-#    df = pull_data(filepath)
-#    print(df)
-#    df = df.to_json(orient = 'split')
-#    return(df)
+@callback(
+    Output('memory', 'data'),
+    Input('filepath', 'value')
+)
+def retrieve_data(filepath):
+     df = pull_data(filepath)
+     return df.to_json(orient='split')
 
 
 # Dropdown Callbacks
@@ -319,13 +317,13 @@ def update_BRYS(y_value, filepath):
      Input('br_z_dropdown', 'value'),
      Input('brx_slider', 'value'),
      Input('bry_slider', 'value'),
-     Input('filepath', 'value')
+     Input('memory', 'data')
      ])
 
 # Function to create and update map depending on stage selected
-def update_tl_fig(mainx_value, mainy_value, mainz_value, mainx_range, mainy_range, bx_value, by_value, bz_value, bx_range, by_range, cx_value, cy_value, cz_value, cx_range, cy_range, filepath):
+def update_tl_fig(mainx_value, mainy_value, mainz_value, mainx_range, mainy_range, bx_value, by_value, bz_value, bx_range, by_range, cx_value, cy_value, cz_value, cx_range, cy_range, data):
 
-    df = pull_data(filepath)
+    df = pd.read_json(data, orient='split')
 
     mainx_low, mainx_high = mainx_range
     mainy_low, mainy_high = mainy_range
@@ -361,14 +359,14 @@ def update_tl_fig(mainx_value, mainy_value, mainz_value, mainx_range, mainy_rang
      Input('br_z_dropdown', 'value'),
      Input('brx_slider', 'value'),
      Input('bry_slider', 'value'),
-     Input('filepath', 'value')
+     Input('memory', 'data')
      ])
 
 # Function to create and update map depending on stage selected
 def update_bl_fig(mainx_value, mainy_value, mainz_value, mainx_range, mainy_range, bx_value, by_value, bz_value,
-                  bx_range, by_range, cx_value, cy_value, cz_value, cx_range, cy_range, filepath):
+                  bx_range, by_range, cx_value, cy_value, cz_value, cx_range, cy_range, data):
 
-    df = pull_data(filepath)
+    df = pd.read_json(data, orient='split')
     
     mainx_low, mainx_high = mainx_range
     mainy_low, mainy_high = mainy_range
@@ -404,14 +402,14 @@ def update_bl_fig(mainx_value, mainy_value, mainz_value, mainx_range, mainy_rang
      Input('bl_z_dropdown', 'value'),
      Input('blx_slider', 'value'),
      Input('bly_slider', 'value'),
-     Input('filepath', 'value')
+     Input('memory', 'data')
      ])
 
 # Function to create and update map depending on stage selected
 def update_br_fig(mainx_value, mainy_value, mainz_value, mainx_range, mainy_range, bx_value, by_value, bz_value,
-                  bx_range, by_range, cx_value, cy_value, cz_value, cx_range, cy_range, filepath):
+                  bx_range, by_range, cx_value, cy_value, cz_value, cx_range, cy_range, data):
 
-    df = pull_data(filepath)
+    df = pd.read_json(data, orient='split')
 
     mainx_low, mainx_high = mainx_range
     mainy_low, mainy_high = mainy_range
@@ -445,13 +443,14 @@ def update_br_fig(mainx_value, mainy_value, mainz_value, mainx_range, mainy_rang
      Input('brx_slider', 'value'),
      Input('br_y_dropdown', 'value'),
      Input('bry_slider', 'value'),
-     Input('filepath', 'value')
+     Input('filepath', 'value'),
+     Input('memory', 'data')
      ])
 
 def update_QQ(log, ax_value, ax_range, ay_value, ay_range, bx_value, bx_range, by_value, by_range, cx_value, cx_range,
-              cy_value, cy_range, filepath):
+              cy_value, cy_range, filepath, data):
 
-    df = pull_data(filepath)
+    df = pd.read_json(data, orient='split')
     quantiles = list(get_quantiles(filepath))
 
     ax_low, ax_high = ax_range

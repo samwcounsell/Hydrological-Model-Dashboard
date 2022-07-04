@@ -12,7 +12,7 @@ def create_navbar():
                 children=[
                     dbc.DropdownMenuItem("Home", href='/'),
                     dbc.DropdownMenuItem(divider=True),
-                    dbc.DropdownMenuItem("Quad Pot", href='/quad_plot'),
+                    dbc.DropdownMenuItem("Quad Plot", href='/quad_plot'),
                     dbc.DropdownMenuItem("About", href='/about')
                 ],
             ),
