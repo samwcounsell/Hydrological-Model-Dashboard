@@ -204,11 +204,22 @@ def update_TLO(filepath):
 
     df = pull_data(filepath)
     vars = list(df)
-    x_options = vars[:-17]
-    y_options = vars[-17:-9]
+    #x_options = vars[:-17]
+    #y_options = vars[-17:-9]
 
-    return(x_options, y_options, y_options, x_options, y_options, y_options, x_options, y_options, y_options,
-           x_options[0], y_options[-1], y_options[-2], x_options[1], y_options[-1], y_options[-2], x_options[2], y_options[-1], y_options[-2])
+    #new stuff
+    options = vars[:-9]
+    non_constant = []
+    for var in options:
+        var_min, var_max = df[var].min(), df[var].max()
+        range = var_max - var_min
+        if range > 0:
+            non_constant.append(var)
+
+
+
+    return(non_constant, non_constant, non_constant, non_constant, non_constant, non_constant, non_constant, non_constant, non_constant,
+           non_constant[0], non_constant[-1], non_constant[-2], non_constant[1], non_constant[-1], non_constant[-2], non_constant[2], non_constant[-1], non_constant[-2])
 
 
 # Range Slider Updates
