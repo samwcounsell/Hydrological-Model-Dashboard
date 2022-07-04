@@ -1,5 +1,6 @@
-from dash import dcc, html, Input, Output, callback, State
+from dash import dcc, html, Input, Output, callback, State, Dash
 import dash_bootstrap_components as dbc
+import dash
 import plotly.express as px
 import plotly.graph_objects as go
 import pandas as pd
@@ -479,7 +480,7 @@ def update_QQ(log, ax_value, ax_range, ay_value, ay_range, bx_value, bx_range, b
                 x=[1, 5, 10, 30, 50, 70, 90, 95, 99],
                 y=[row['Q1'], row['Q5'], row['Q10'], row['Q30'], row['Q50'], row['Q70'],
                    row['Q90'], row['Q95'], row['Q99']],
-                mode="lines", showlegend=True, marker_color=trace_cols[idx % 8]
+                mode="lines", showlegend=True, marker_color=trace_cols[idx % 8], name = idx
             )
         )
 
