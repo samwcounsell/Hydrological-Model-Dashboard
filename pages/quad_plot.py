@@ -1,6 +1,6 @@
 from dash import dcc, html, Input, Output, callback, State, Dash
 import dash_bootstrap_components as dbc
-import dash
+import math
 import plotly.express as px
 import plotly.graph_objects as go
 import pandas as pd
@@ -230,9 +230,8 @@ def update_TLO(filepath):
     Input('filepath', 'value'))
 def update_TLXS(x_value, filepath):
     df = pull_data(filepath)
-    x_value = str(x_value)
-    tlx_min_val = df[x_value].min()
-    tlx_max_val = df[x_value].max()
+    tlx_min_val = math.floor(df[x_value].min() * 1000) / 1000
+    tlx_max_val = math.ceil(df[x_value].max() * 1000) / 1000
     return tlx_min_val, tlx_max_val, [tlx_min_val, tlx_max_val]
 
 
@@ -244,8 +243,8 @@ def update_TLXS(x_value, filepath):
     Input('filepath', 'value'))
 def update_TLYS(y_value, filepath):
     df = pull_data(filepath)
-    tly_min_val = df[y_value].min()
-    tly_max_val = df[y_value].max()
+    tly_min_val = math.floor(df[y_value].min() * 1000) / 1000
+    tly_max_val = math.ceil(df[y_value].max() * 1000) / 1000
     return tly_min_val, tly_max_val, [tly_min_val, tly_max_val]
 
 @callback(
@@ -256,8 +255,8 @@ def update_TLYS(y_value, filepath):
     Input('filepath', 'value'))
 def update_BLXS(x_value, filepath):
     df = pull_data(filepath)
-    blx_min_val = df[x_value].min()
-    blx_max_val = df[x_value].max()
+    blx_min_val = math.floor(df[x_value].min() * 1000) / 1000
+    blx_max_val = math.ceil(df[x_value].max() * 1000) / 1000
     return blx_min_val, blx_max_val, [blx_min_val, blx_max_val]
 
 @callback(
@@ -268,8 +267,8 @@ def update_BLXS(x_value, filepath):
     Input('filepath', 'value'))
 def update_BLYS(y_value, filepath):
     df = pull_data(filepath)
-    bly_min_val = df[y_value].min()
-    bly_max_val = df[y_value].max()
+    bly_min_val = math.floor(df[y_value].min() * 1000) / 1000
+    bly_max_val = math.ceil(df[y_value].max() * 1000) / 1000
     return bly_min_val, bly_max_val, [bly_min_val, bly_max_val]
 
 
@@ -281,8 +280,8 @@ def update_BLYS(y_value, filepath):
     Input('filepath', 'value'))
 def update_BRXS(x_value, filepath):
     df = pull_data(filepath)
-    brx_min_val = df[x_value].min()
-    brx_max_val = df[x_value].max()
+    brx_min_val = math.floor(df[x_value].min() * 1000) / 1000
+    brx_max_val = math.ceil(df[x_value].max() * 1000) / 1000
     return brx_min_val, brx_max_val, [brx_min_val, brx_max_val]
 
 @callback(
@@ -293,8 +292,8 @@ def update_BRXS(x_value, filepath):
     Input('filepath', 'value'))
 def update_BRYS(y_value, filepath):
     df = pull_data(filepath)
-    bry_min_val = df[y_value].min()
-    bry_max_val = df[y_value].max()
+    bry_min_val = math.floor(df[y_value].min() * 1000) / 1000
+    bry_max_val = math.ceil(df[y_value].max() * 1000) / 1000
     return bry_min_val, bry_max_val, [bry_min_val, bry_max_val]
 
 # Standard plot Callbacks
