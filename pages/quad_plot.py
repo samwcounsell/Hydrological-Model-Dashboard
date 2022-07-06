@@ -17,15 +17,15 @@ types = 'text'
 
 vars = list(df)
 
+# Seperating quantiles from variables
 q = vars[-9:]
-y_options = vars[-17:-9]
-del (y_options[2:4])
+options = vars[:-9]
 
-x_options = vars[:-17]
-
+# Defining launch values for range sliders
 min_val_tlx, min_val_tly, min_val_blx, min_val_bly, min_val_brx, min_val_bry = 0, -1, 0, -1, 0, -1
 max_val_tlx, max_val_tly, max_val_blx, max_val_bly, max_val_brx, max_val_bry = 1000, 1000, 1000, 1000, 1000, 1000
 
+# Custom Colour Scheme
 trace_cols = ['seagreen', 'blue', 'cornflowerblue', 'lightgreen', 'forestgreen', 'gold', 'lightblue', 'lightgreen']
 
 # Page layout
@@ -41,11 +41,11 @@ layout = html.Div([
     # X, Y, Z       log
     dbc.Row([
         
-        dbc.Col(dcc.Dropdown(id='tl_x_dropdown', options=x_options, value=x_options[0],
+        dbc.Col(dcc.Dropdown(id='tl_x_dropdown', options=options, value=options[0],
                          style={'textAlign': 'center', 'font-size': 'x-small'})),
-        dbc.Col(dcc.Dropdown(id='tl_y_dropdown', options=y_options, value='VolError(%)',
+        dbc.Col(dcc.Dropdown(id='tl_y_dropdown', options=options, value=options[-1],
                          style={'textAlign': 'center', 'font-size': 'x-small'})),
-        dbc.Col(dcc.Dropdown(id='tl_z_dropdown', options=y_options, value='RMSE',
+        dbc.Col(dcc.Dropdown(id='tl_z_dropdown', options=options, value=options[-2],
                          style={'textAlign': 'center', 'font-size': 'x-small'})),
         dbc.Col(html.P("")),
         dbc.Col(dcc.Dropdown(id='QQ_log_dropdown', options=['Yes', 'No'], value='No',
@@ -88,18 +88,18 @@ layout = html.Div([
 
     dbc.Row([
 
-        dbc.Col(dcc.Dropdown(id='bl_x_dropdown', options=x_options, value=x_options[1],
+        dbc.Col(dcc.Dropdown(id='bl_x_dropdown', options=options, value=options[1],
                          style={'textAlign': 'center', 'font-size': 'x-small'})),
-        dbc.Col(dcc.Dropdown(id='bl_y_dropdown', options=y_options, value='VolError(%)',
+        dbc.Col(dcc.Dropdown(id='bl_y_dropdown', options=options, value=options[-1],
                          style={'textAlign': 'center', 'font-size': 'x-small'})),
-        dbc.Col(dcc.Dropdown(id='bl_z_dropdown', options=y_options, value='RMSE',
+        dbc.Col(dcc.Dropdown(id='bl_z_dropdown', options=options, value=options[-2],
                          style={'textAlign': 'center', 'font-size': 'x-small'})),
         dbc.Col(html.P("")),
-        dbc.Col(dcc.Dropdown(id='br_x_dropdown', options=x_options, value=x_options[2],
+        dbc.Col(dcc.Dropdown(id='br_x_dropdown', options=options, value=options[2],
                          style={'textAlign': 'center', 'font-size': 'x-small'})),
-        dbc.Col(dcc.Dropdown(id='br_y_dropdown', options=y_options, value='VolError(%)',
+        dbc.Col(dcc.Dropdown(id='br_y_dropdown', options=options, value=options[-1],
                          style={'textAlign': 'center', 'font-size': 'x-small'})),
-        dbc.Col(dcc.Dropdown(id='br_z_dropdown', options=y_options, value='RMSE',
+        dbc.Col(dcc.Dropdown(id='br_z_dropdown', options=options, value=options[-2],
                          style={'textAlign': 'center', 'font-size': 'x-small'}))
 
     ], style={"display": "grid", "grid-template-columns": "15% 15% 15% 10% 15% 15% 15%"}),
@@ -203,10 +203,6 @@ def update_TLO(filepath):
 
     df = pull_data(filepath)
     vars = list(df)
-    #x_options = vars[:-17]
-    #y_options = vars[-17:-9]
-
-    #new stuff
     options = vars[:-9]
     non_constant = []
     for var in options:
@@ -319,10 +315,10 @@ def update_BRYS(y_value, filepath):
      Input('memory', 'data')
      ])
 
-# Function to create and update map depending on stage selected
 def update_tl_fig(mainx_value, mainy_value, mainz_value, mainx_range, mainy_range, bx_value, by_value, bz_value, bx_range, by_range, cx_value, cy_value, cz_value, cx_range, cy_range, data):
 
     df = pd.read_json(data, orient='split')
+
 
     mainx_low, mainx_high = mainx_range
     mainy_low, mainy_high = mainy_range
@@ -330,7 +326,7 @@ def update_tl_fig(mainx_value, mainy_value, mainz_value, mainx_range, mainy_rang
     by_low, by_high = by_range
     cx_low, cx_high = cx_range
     cy_low, cy_high = cy_range
-    
+    # Selecting only data within specified range slider values
     mask = (df[df[mainx_value].between(mainx_low, mainx_high) & df[mainy_value].between(mainy_low, mainy_high) &
                df[bx_value].between(bx_low, bx_high) &
                df[cx_value].between(cx_low, cx_high) & df[by_value].between(by_low, by_high) &
@@ -361,7 +357,6 @@ def update_tl_fig(mainx_value, mainy_value, mainz_value, mainx_range, mainy_rang
      Input('memory', 'data')
      ])
 
-# Function to create and update map depending on stage selected
 def update_bl_fig(mainx_value, mainy_value, mainz_value, mainx_range, mainy_range, bx_value, by_value, bz_value,
                   bx_range, by_range, cx_value, cy_value, cz_value, cx_range, cy_range, data):
 
@@ -404,7 +399,6 @@ def update_bl_fig(mainx_value, mainy_value, mainz_value, mainx_range, mainy_rang
      Input('memory', 'data')
      ])
 
-# Function to create and update map depending on stage selected
 def update_br_fig(mainx_value, mainy_value, mainz_value, mainx_range, mainy_range, bx_value, by_value, bz_value,
                   bx_range, by_range, cx_value, cy_value, cz_value, cx_range, cy_range, data):
 
