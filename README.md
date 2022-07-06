@@ -1,4 +1,4 @@
-# WR_Dashboard
+# Interactive Hydrological Model Output Dashboard
  
 Dashboard to visualise data from Kestrel-IHM
 
