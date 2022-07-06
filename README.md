@@ -7,4 +7,5 @@ dash 2.4.1 or later\
 dash-bootstrap-components\
 pandas\
 plotly\
-glob
+glob\
+math
