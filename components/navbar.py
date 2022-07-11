@@ -17,7 +17,7 @@ def create_navbar():
                 ],
             ),
         ],
-        brand="Kestrel-IHM Dash",
+        brand="Hydrological Data Dashboard",
         brand_href="/home",
         sticky="top",
         color="lightseagreen",

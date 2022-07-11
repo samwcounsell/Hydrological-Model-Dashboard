@@ -48,7 +48,7 @@ layout = html.Div([
         dbc.Col(dcc.Dropdown(id='tl_z_dropdown', options=options, value=options[-2],
                          style={'textAlign': 'center', 'font-size': 'x-small'})),
         dbc.Col(html.P("")),
-        dbc.Col(dcc.Dropdown(id='QQ_log_dropdown', options=['Yes', 'No'], value='No',
+        dbc.Col(dcc.Dropdown(id='QQ_log_dropdown', options=['Log Axis: Yes', 'Log Axis: No'], value='Log Axis: No',
                          style={'textAlign': 'center', 'font-size': 'x-small'})),
 
     ], style={"display": "grid", "grid-template-columns": "15% 15% 15% 20% 40%"}),
@@ -476,7 +476,7 @@ def update_QQ(log, ax_value, ax_range, ay_value, ay_range, bx_value, bx_range, b
             )
         )
 
-    if log == 'Yes':
+    if log == 'Log Axis: Yes':
         QQ_plot.update_yaxes(title='Flow (Log)', type="log")
     else:
         QQ_plot.update_yaxes()
