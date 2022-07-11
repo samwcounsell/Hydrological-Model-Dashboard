@@ -34,7 +34,7 @@ layout = html.Div([
     navbar,
 
     html.H1(
-        children=' Kestrel-IHM 3-Dimensional Plot',
+        children=' Hydrological Model 3-Dimensional Plot',
         style={'textAlign': 'center', 'padding': 30}
     ),
 
